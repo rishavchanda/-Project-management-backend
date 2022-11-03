@@ -13,10 +13,8 @@
 
 # misc
 .env
-.env.example
-.env.local
-.env.staging
 .DS_Store
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local

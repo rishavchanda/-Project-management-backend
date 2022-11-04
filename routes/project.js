@@ -1,5 +1,5 @@
 import express from "express";
-import { addProject, deleteProject, getProject, updateProject } from "../controllers/project.js";
+import { addProject, deleteProject, getProject, updateProject, inviteProjectMember, verifyInvitation, getProjectMembers } from "../controllers/project.js";
 import { verifyToken } from "../verifyToken.js";
 
 const router = express.Router();
@@ -7,12 +7,17 @@ const router = express.Router();
 //create a project
 router.post("/", verifyToken, addProject);
 //get all projects
-//router.get("/all", signin);
 router.get("/:id", verifyToken, getProject)
-//router.get("/all", signin);
+//delete a project
 router.delete("/:id", verifyToken, deleteProject)
-//router.get("/all", signin);
+//update a project
 router.patch("/:id", verifyToken, updateProject)
+//invite a team project
+router.post("/invite/:id", verifyToken, inviteProjectMember)
+//verify a invite
+router.get("/invite/:projectId/:userId", verifyInvitation)
+//get team members
+router.get("/members/:id", getProjectMembers)
 
 
 export default router;

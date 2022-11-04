@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import projectRoutes from './routes/project.js';
+import teamRoutes from './routes/teams.js';
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json())
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/project", projectRoutes)
+app.use("/api/team", teamRoutes)
 app.use((err, req, res, next)=>{
     const status = err.status || 500;
     const message = err.message || "Something went wrong";        

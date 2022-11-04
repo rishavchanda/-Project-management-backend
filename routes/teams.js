@@ -1,88 +1,25 @@
-import mongoose from "mongoose";
-import User from "../models/User.js";
-import bcrypt from "bcrypt";
-import { createError } from "../error.js";
-import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
-import dotenv from 'dotenv';
-import Teams from "../models/Teams.js";
+import express from "express";
+import { addTeam, getTeam, deleteTeam, updateTeam, addTeamProject, inviteTeamMember, verifyInvitationTeam, getTeamMembers } from "../controllers/teams.js";
+import { verifyToken } from "../verifyToken.js";
+
+const router = express.Router();
+
+//create a Team
+router.post("/", verifyToken, addTeam);
+//get all Teams
+router.get("/:id", verifyToken, getTeam)
+//delete a Team
+router.delete("/:id", verifyToken, deleteTeam)
+//update a Team
+router.patch("/:id", verifyToken, updateTeam)
+//add a team project
+router.post("/addProject/:id", verifyToken, addTeamProject)
+//invite a team member
+router.post("/invite/:id", verifyToken, inviteTeamMember)
+//verify a invite
+router.get("/invite/:teamId/:userId", verifyInvitationTeam)
+//get team members
+router.get("/members/:id", getTeamMembers)
 
 
-export const addTeam = async (req, res, next) => {
-  const user = await User.findOne({ id: req.user.id });
-  if (!user) {
-    return next(createError(404, "User not found"));
-  }
-  if (!user.verified) {
-    return res.status(200).json({ message: "Verify your Account." });
-  }
-  const newTeams = new Teams({ members: [{ id: user.id, role: "d", access: "Owner" }], ...req.body });
-  try {
-    const saveTeams = await (await newTeams.save());
-    User.findByIdAndUpdate(user.id, { $push: { projects: saveTeams._id } }, { new: true }, (err, doc) => {
-      if (err) {
-        next(err);
-      }
-    });
-    res.status(200).json(saveTeams);
-  } catch (err) {
-    next(err);
-  }
-};
-
-
-export const deleteProject = async (req, res, next) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return next(createError(404, "Project not found!"));
-    for (let i = 0; i < project.members.length; i++) {
-      if (project.members[i].id === req.user.id) {
-        if (project.members[i].access === "Owner") {
-          await project.delete();
-          res.status(200).json("Project has been deleted...");
-        } else {
-          return next(createError(403, "You are not allowed to delete this project!"));
-        }
-      }
-    }
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getProject = async (req, res, next) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    res.status(200).json(project);
-  } catch (err) {
-    next(err);
-  }
-};
-
-
-export const updateProject = async (req, res, next) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return next(createError(404, "project not found!"));
-    for (let i = 0; i < project.members.length; i++) {
-      if (project.members[i].id === req.user.id) {
-        if (project.members[i].access === "Owner" || project.members[i].access === "Admin" || project.members[i].access === "Editor") {
-          const updatedproject = await Project.findByIdAndUpdate(
-            req.params.id,
-            {
-              $set: req.body,
-            },
-            { new: true }
-          );
-          res.status(200).json(updatedproject);
-        } else {
-          return next(createError(403, "You are not allowed to update this project!"));
-        }
-      } else {
-        return next(createError(403, "You can update only if you are a member of this project!"));
-      }
-    }
-  } catch (err) {
-    next(err);
-  }
-};
+export default router;

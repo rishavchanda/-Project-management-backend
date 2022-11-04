@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema({
         type: [String],
         default: [],
     },
+    teams: {
+        type: [String],
+        default: [],
+    },
     notifications: {
         type: [{
             notification: {

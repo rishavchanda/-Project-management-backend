@@ -14,12 +14,17 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        default: "",
     },
     img: {
         type: String,
     },
     verified: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+    googleSignIn:{
         type: Boolean,
         required: true,
         default: false,

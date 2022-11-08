@@ -5,6 +5,8 @@ import {
   getUser,
   subscribe,
   unsubscribe,
+  getUserProjects,
+  getUserTeams
 } from "../controllers/user.js";
 import { verifyToken } from "../verifyToken.js";
 
@@ -24,6 +26,12 @@ router.put("/sub/:id", verifyToken, subscribe);
 
 //unsubscribe a user
 router.put("/unsub/:id", verifyToken, unsubscribe);
+
+//get user projects
+router.get("/projects", verifyToken, getUserProjects);
+
+//get user teams
+router.get("/teams", verifyToken, getUserTeams);
 
 
 export default router;

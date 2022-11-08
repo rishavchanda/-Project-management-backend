@@ -16,7 +16,7 @@ export const addProject = async (req, res, next) => {
   if (!user.verified) {
     return res.status(200).json({ message: "Verify your Account." });
   }
-  const newProject = new Project({ members: [{ id: user.id, role: "d", access: "Owner" }], ...req.body });
+  const newProject = new Project({ members: [{ id: user.id, img: user.img, email: user.email, name: user.name ,role: "d", access: "Owner" }], ...req.body });
   try {
     const saveProject = await (await newProject.save());
     User.findByIdAndUpdate(user.id, { $push: { projects: saveProject._id } }, { new: true }, (err, doc) => {
@@ -158,7 +158,7 @@ export const verifyInvitation = async (req, res, next) => {
         return next(createError(403, "You are already a member of this project!"));
       }
     }
-    const newMember = { id: user.id, role: "d", access: "View Only" };
+    const newMember = { id: user.id, img: user.img, name: user.name, email: user.email, role: "d", access: "View Only" };
     const updatedProject = await Project.findByIdAndUpdate(
       req.params.projectId,
       {

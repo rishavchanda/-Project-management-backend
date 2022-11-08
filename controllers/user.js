@@ -1,5 +1,7 @@
 import { createError } from "../error.js";
 import User from "../models/User.js";
+import Project from "../models/Project.js";
+import Teams from "../models/Teams.js";
 
 export const update = async (req, res, next) => {
   if (req.params.id === req.user.id) {
@@ -69,6 +71,48 @@ export const unsubscribe = async (req, res, next) => {
     } catch (err) {
       next(err);
     }
+  } catch (err) {
+    next(err);
+  }
+}
+
+//find project id from user and get it from projects collection and send it to client
+export const getUserProjects = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).populate("projects")
+    const projects = []
+    await Promise.all(user.projects.map(async (project) => {
+      await Project.findById(project).then((project) => {
+        projects.push(project)
+      }).catch((err) => {
+        next(err)
+      })
+    })).then(() => {
+      res.status(200).json(projects)
+    }).catch((err) => {
+      next(err)
+    })
+  } catch (err) {
+    next(err);
+  }
+}
+
+//find team id from user and get it from teams collection and send it to client
+export const getUserTeams = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).populate("teams")
+    const teams = []
+    await Promise.all(user.teams.map(async (team) => {
+      await Teams.findById(team).then((team) => {
+        teams.push(team)
+      }).catch((err) => {
+        next(err)
+      })
+    })).then(() => {
+      res.status(200).json(teams)
+    }).catch((err) => {
+      next(err)
+    })
   } catch (err) {
     next(err);
   }

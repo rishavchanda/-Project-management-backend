@@ -40,7 +40,7 @@ export const signup = async (req, res) => {
         // Step 2 - Generate a verification token with the user's ID
         const verificationToken = newUser.generateVerificationToken();
         // Step 3 - Email the user a unique verification link
-        const url = `http://localhost:8080/api/auth/verify/${verificationToken}`
+        const url = `http://localhost:8800/api/auth/verify/${verificationToken}`
         transporter.sendMail({
             to: email,
             subject: 'Verify Account',
@@ -73,7 +73,7 @@ export const signin = async (req, res, next) => {
         }
         // Step 2 - Ensure the account has been verified
         if (!user.verified) {
-            return res.status(201).json({ message: "Verify your Account." });
+            return res.status(203).json({ message: "Verify Account :-  Open your mail and verify account to login" });
         }
         const token = jwt.sign({ id: user._id }, process.env.JWT);
         const { password, ...others } = user._doc;

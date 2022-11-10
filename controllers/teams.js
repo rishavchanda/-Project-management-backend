@@ -59,7 +59,25 @@ export const deleteTeam = async (req, res, next) => {
 export const getTeam = async (req, res, next) => {
     try {
         const team = await Teams.findById(req.params.id);
-        res.status(200).json(team);
+        const members = []
+        const projects = []
+        var verified = true
+        await Promise.all(
+            team.members.map(async (Member) => {
+                const member = await User.findById(Member.id);
+                members.push({ id: member.id, role: Member.role, access: Member.access, name: member.name, img: member.img, email: member.email });
+            }),
+            team.projects.map(async (Projects) => {
+                const project = await Project.findById(Projects);
+                projects.push(project);
+            })
+        )
+            .then(() => {
+                if (verified) {
+                    const Team = new Teams({ ...team._doc, members: members});
+                    return res.status(200).json({ Team, projects });
+                }
+            });
     } catch (err) {
         next(err);
     }

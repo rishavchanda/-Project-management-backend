@@ -35,9 +35,18 @@ export const deleteUser = async (req, res, next) => {
   }
 }
 
-export const getUser = async (req, res, next) => {
+export const findUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
+    res.status(200).json(user);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
     res.status(200).json(user);
   } catch (err) {
     next(err);
@@ -103,7 +112,7 @@ export const getUserTeams = async (req, res, next) => {
     const user = await User.findById(req.user.id).populate("teams")
     const teams = []
     await Promise.all(user.teams.map(async (team) => {
-      await Teams.findById(team).then((team) => {
+      await Teams.findById(team.id).then((team) => {
         teams.push(team)
       }).catch((err) => {
         next(err)

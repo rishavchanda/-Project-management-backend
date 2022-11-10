@@ -35,7 +35,17 @@ const UserSchema = new mongoose.Schema({
         default: [],
     },
     teams: {
-        type: [String],
+        type: [{
+            _id:false,
+            id: {
+                type: String,
+                required: true
+            },
+            name: {
+                type: String,
+                required: true
+            }
+        }],
         default: [],
     },
     notifications: {

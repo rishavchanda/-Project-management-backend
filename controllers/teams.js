@@ -61,9 +61,11 @@ export const getTeam = async (req, res, next) => {
         const team = await Teams.findById(req.params.id);
         const members = []
         const projects = []
-        var verified = true
+        var verified = false
         await Promise.all(
             team.members.map(async (Member) => {
+                if(Member.id === req.user.id)
+                    verified = true
                 const member = await User.findById(Member.id);
                 members.push({ id: member.id, role: Member.role, access: Member.access, name: member.name, img: member.img, email: member.email });
             }),
@@ -76,6 +78,8 @@ export const getTeam = async (req, res, next) => {
                 if (verified) {
                     const Team = new Teams({ ...team._doc, members: members});
                     return res.status(200).json({ Team, projects });
+                }else{
+                    return next(createError(403, "You are not allowed to see this Team!"));
                 }
             });
     } catch (err) {

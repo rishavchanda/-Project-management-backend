@@ -5,9 +5,9 @@ import { verifyToken } from "../verifyToken.js";
 const router = express.Router();
 
 //create a Team
-router.post("/", verifyToken, addTeam);
+router.post("/",verifyToken, addTeam);
 //get all Teams
-router.get("/:id", verifyToken, getTeam)
+router.get("/:id",verifyToken, getTeam)
 //delete a Team
 router.delete("/:id", verifyToken, deleteTeam)
 //update a Team
@@ -17,9 +17,9 @@ router.post("/addProject/:id", verifyToken, addTeamProject)
 //invite a team member
 router.post("/invite/:id", verifyToken, inviteTeamMember)
 //verify a invite
-router.get("/invite/:teamId/:userId", verifyInvitationTeam)
+router.get("/invite/:teamId/:userId", verifyToken, verifyInvitationTeam)
 //get team members
-router.get("/members/:id", getTeamMembers)
+router.get("/members/:id", verifyToken, getTeamMembers)
 
 
 export default router;

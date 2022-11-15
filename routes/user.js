@@ -7,7 +7,8 @@ import {
   unsubscribe,
   getUserProjects,
   getUserTeams,
-  findUser
+  findUser,
+  findUserByEmail
 } from "../controllers/user.js";
 import { verifyToken } from "../verifyToken.js";
 
@@ -34,6 +35,9 @@ router.get("/projects", verifyToken, getUserProjects);
 
 //get user teams
 router.get("/teams", verifyToken, getUserTeams);
+
+//search a user
+router.get("/search/:email", findUserByEmail);
 
 
 export default router;

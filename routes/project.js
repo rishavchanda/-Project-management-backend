@@ -15,9 +15,9 @@ router.patch("/:id", verifyToken, updateProject)
 //invite a team project
 router.post("/invite/:id", verifyToken, inviteProjectMember)
 //verify a invite
-router.get("/invite/:projectId/:userId", verifyInvitation)
+router.get("/invite/:projectId/:userId",verifyToken, verifyInvitation)
 //get team members
-router.get("/members/:id", getProjectMembers)
+router.get("/members/:id",verifyToken, getProjectMembers)
 
 
 export default router;

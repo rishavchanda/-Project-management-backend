@@ -64,7 +64,7 @@ export const getTeam = async (req, res, next) => {
         var verified = false
         await Promise.all(
             team.members.map(async (Member) => {
-                if(Member.id === req.user.id)
+                if (Member.id === req.user.id)
                     verified = true
                 const member = await User.findById(Member.id);
                 members.push({ id: member.id, role: Member.role, access: Member.access, name: member.name, img: member.img, email: member.email });
@@ -76,9 +76,9 @@ export const getTeam = async (req, res, next) => {
         )
             .then(() => {
                 if (verified) {
-                    const Team = new Teams({ ...team._doc, members: members});
+                    const Team = new Teams({ ...team._doc, members: members });
                     return res.status(200).json({ Team, projects });
-                }else{
+                } else {
                     return next(createError(403, "You are not allowed to see this Team!"));
                 }
             });
@@ -159,7 +159,7 @@ const transporter = nodemailer.createTransport({
 
 export const inviteTeamMember = async (req, res, next) => {
     //send mail using nodemailer
-    const user = await User.findOne({ id: req.user.id });
+    const user = await User.findOne({ id: req.user.id })
     if (!user) {
         return next(createError(404, "User not found"));
     }
@@ -210,20 +210,30 @@ export const verifyInvitationTeam = async (req, res, next) => {
                 return next(createError(403, "You are already a member of this team!"));
             }
         }
-        const newMember = { id: user.id, role: "d", access: "View Only" };
-        const updatedTeam = await Teams.findByIdAndUpdate(
+        const newMember = { id: user.id, role: "d", access: "View Only", name: user.name, img: user.img, email: user.email };
+
+        await Teams.findByIdAndUpdate(
             req.params.teamId,
             {
                 $push: { members: newMember },
             },
             { new: true }
-        );
-        User.findByIdAndUpdate(user.id, { $push: { teams: updatedTeam._id } }, { new: true }, (err, doc) => {
-            if (err) {
+        ).then(async () => {
+            //add tem id and team name to user
+            await User.findByIdAndUpdate(
+                req.params.userId,
+                {
+                    $push: { teams: { id: team.id, name: team.name } },
+                },
+                { new: true }
+            ).then((result) => {
+                res.status(200).json({ Message: "You have successfully joined the team!" });
+            }).catch((err) => {
                 next(err);
-            }
+            });
+        }).catch((err) => {
+            next(err);
         });
-        res.status(200).json(updatedTeam);
     } catch (err) {
         next(err);
     }

@@ -126,3 +126,19 @@ export const getUserTeams = async (req, res, next) => {
     next(err);
   }
 }
+
+//find user from email and send it to client
+export const findUserByEmail = async (req, res, next) => {
+  const email = req.params.email;
+  const users = [];
+  try {
+    await User.findOne({ email: {$regex: email, $options: "i"} }).then((user) => {
+      users.push(user)
+    }).catch((err) => {
+      next(err)
+    })
+    res.status(200).json(users);
+  } catch (err) {
+    next(err);
+  }
+}

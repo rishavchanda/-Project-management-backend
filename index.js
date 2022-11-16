@@ -21,9 +21,17 @@ const connect = () => {
 };
 
 const corsOptions ={
-    origin: ['http://localhost:3000','https://vexa-server.herokuapp.com'], 
+    origin: ['http://localhost:3000','https://meek-muffin-6f4e2b.netlify.app'], 
     credentials:true,            //access-control-allow-credentials:true
-    optionSuccessStatus:200
+    optionSuccessStatus:200,
+    allowedHeaders: [
+        "Content-Type",
+        "Accept",
+        "Origin",
+        "X-Requested-With",
+        "Authorization",
+        "Set-Cookie",
+      ],
 }
 
 app.use(cookieParser())

@@ -37,16 +37,16 @@ const corsOptions ={
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors(corsOptions))
-app.enable('trust proxy'); // optional, not needed for secure cookies
-app.use(express.session({
-    secret : '123456',
-    key : 'sid',
-    proxy : true, // add this when behind a reverse proxy, if you need secure cookies
-    cookie : {
-        secure : true,
-        maxAge: 5184000000 // 2 months
-    }
-}));
+// app.enable('trust proxy'); // optional, not needed for secure cookies
+// app.use(express.session({
+//     secret : '123456',
+//     key : 'sid',
+//     proxy : true, // add this when behind a reverse proxy, if you need secure cookies
+//     cookie : {
+//         secure : true,
+//         maxAge: 5184000000 // 2 months
+//     }
+// }));
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/project", projectRoutes)

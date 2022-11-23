@@ -50,6 +50,18 @@ const ProjectSchema = new mongoose.Schema({
                 type: String,
                 required: true,
             },
+            img: {
+                type: String,
+                default: "",
+            },
+            name: {
+                type: String,
+                default: "",
+            },
+            email: {
+                type: String,
+                default: "",
+            },
             role: {
                 type: String,
                 required: true,

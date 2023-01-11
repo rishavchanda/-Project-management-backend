@@ -17,14 +17,16 @@ export const addTeam = async (req, res, next) => {
     if (!user.verified) {
         return res.status(200).json({ message: "Verify your Account." });
     }
-    const newTeams = new Teams({ members: [{ id: user.id, role: "d", access: "Owner" }], ...req.body });
+    const newTeams = new Teams({ members: [{ id: user.id, role: "d", access: "Owner", img: user.img, name: user.name, email: user.email }], ...req.body });
     try {
-        const saveTeams = await (await newTeams.save());
-        User.findByIdAndUpdate(user.id, { $push: { teams: saveTeams._id } }, { new: true }, (err, doc) => {
+        const saveTeams = (await newTeams.save())
+
+        User.findByIdAndUpdate(user.id, { $push: { teams: { id: saveTeams._id, name: saveTeams.name } } }, { new: true }, (err, doc) => {
             if (err) {
                 next(err);
             }
-        });
+        })
+
         res.status(200).json(saveTeams);
     } catch (err) {
         next(err);
@@ -61,19 +63,19 @@ export const getTeam = async (req, res, next) => {
         const team = await Teams.findById(req.params.id);
         const members = []
         const projects = []
-        var verified = false
+        var verified = true
         await Promise.all(
             team.members.map(async (Member) => {
                 if (Member.id === req.user.id)
                     verified = true
                 const member = await User.findById(Member.id);
                 members.push({ id: member.id, role: Member.role, access: Member.access, name: member.name, img: member.img, email: member.email });
-            }),
-            team.projects.map(async (Projects) => {
-                const project = await Project.findById(Projects);
-                projects.push(project);
-            })
-        )
+            })).then(() => Promise.all(
+                team.projects.map(async (Projects) => {
+                    const project = await Project.findById(Projects);
+                    projects.push(project);
+                }))
+            )
             .then(() => {
                 if (verified) {
                     const Team = new Teams({ ...team._doc, members: members });

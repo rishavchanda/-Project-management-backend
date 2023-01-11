@@ -25,6 +25,10 @@ const ProjectSchema = new mongoose.Schema({
         required: true,
         default: "Working",
     },
+    works: {
+        type: [String],
+        default: []
+    },
     tools: {
         type: [{
             _id: false,

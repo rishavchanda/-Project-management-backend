@@ -8,7 +8,8 @@ import {
   getUserProjects,
   getUserTeams,
   findUser,
-  findUserByEmail
+  findUserByEmail,
+  getNotifications
 } from "../controllers/user.js";
 import { verifyToken } from "../verifyToken.js";
 
@@ -37,7 +38,10 @@ router.get("/projects", verifyToken, getUserProjects);
 router.get("/teams", verifyToken, getUserTeams);
 
 //search a user
-router.get("/search/:email", findUserByEmail);
+router.get("/search/:email",verifyToken, findUserByEmail);
+
+//get notifications of a user
+router.get("/notifications", verifyToken, getNotifications);
 
 
 export default router;

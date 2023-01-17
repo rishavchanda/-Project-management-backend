@@ -1,5 +1,6 @@
 import express from "express";
 import { signup,signin,verify, logout, googleAuthSignIn } from "../controllers/auth.js";
+import { verifyToken } from "../verifyToken.js";
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ router.get("/verify/:token", verify);
 router.post("/logout", logout);
 //google signin
 router.post("/google", googleAuthSignIn);
+
 
 
 export default router;

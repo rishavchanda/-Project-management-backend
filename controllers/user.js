@@ -2,6 +2,7 @@ import { createError } from "../error.js";
 import User from "../models/User.js";
 import Project from "../models/Project.js";
 import Teams from "../models/Teams.js";
+import Notifications from "../models/Notifications.js";
 
 export const update = async (req, res, next) => {
   if (req.params.id === req.user.id) {
@@ -45,13 +46,42 @@ export const findUser = async (req, res, next) => {
 }
 
 export const getUser = async (req, res, next) => {
+  //if the req.user id is not present then it will give a message of user not authenticated 
+  
   try {
     const user = await User.findById(req.user.id);
+    //extract the notification from the user and send it to the client
+    const notifications = user.notifications;
+    const notificationArray = [];
+    for (let i = 0; i < notifications.length; i++) {
+      const notification = await Notifications.findById(notifications[i]);
+      notificationArray.push(notification);
+    }
     res.status(200).json(user);
+  } catch (err) {
+    console.log(req.user)
+    next(err);
+  }
+}
+
+// get notifications of the user
+
+export const getNotifications = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    //extract the notification from the user and send it to the client
+    const notifications = user.notifications;
+    const notificationArray = [];
+    for (let i = 0; i < notifications.length; i++) {
+      const notification = await Notifications.findById(notifications[i]);
+      notificationArray.push(notification);
+    }
+    res.status(200).json(notificationArray);
   } catch (err) {
     next(err);
   }
 }
+
 
 export const subscribe = async (req, res, next) => {
   try {

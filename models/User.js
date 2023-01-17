@@ -49,15 +49,15 @@ const UserSchema = new mongoose.Schema({
         default: [],
     },
     notifications: {
-        type: [{
-            notification: {
-                type: String,
-                required: true,
-            },
-            link: {
-                type: String,
-            }
-        }],
+        type: [String],
+        default: [],
+    },
+    works: {
+        type: [String],
+        default: [],
+    },
+    tasks: {
+        type: [String],
         default: [],
     }
 },

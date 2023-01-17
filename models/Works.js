@@ -1,6 +1,16 @@
 import mongoose from "mongoose";
 
 const WorksSchema = new mongoose.Schema({
+    projectId: {
+        type: String,
+        required: true,
+        unique: false,
+    },
+    creatorId: {
+        type: String,
+        required: true,
+        unique: false,
+    },
     title: {
         type: String,
         required: true,
@@ -11,44 +21,24 @@ const WorksSchema = new mongoose.Schema({
         required: true,
         unique: false,
     },
+    priority: {
+        type: String,
+        required: true,
+        default: "Low",
+    },
     tags: {
         type: [String],
         default: [],
-    },
-    startDate: {
-        type: Date,
-        required: true,
-        default: Date.now,
-    },
-    endDate: {
-        type: Date,
-        required: true,
-        default: Date.now,
     },
     status: {
         type: String,
         required: true,
         default: "Working",
     },
-    members: {
-        type: [{
-            _id: false,
-            id: {
-                type: String,
-                required: true,
-            },
-            img: {
-                type: String,
-                default: "",
-            },
-            role: {
-                type: String,
-                required: true,
-            }
-        }],
-        required: true,
+    tasks: {
+        type: [String],
         default: [],
-    },
+    }
 },
     { timestamps: true }
 );

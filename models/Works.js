@@ -2,12 +2,14 @@ import mongoose from "mongoose";
 
 const WorksSchema = new mongoose.Schema({
     projectId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Projects",
         required: true,
         unique: false,
     },
     creatorId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true,
         unique: false,
     },
@@ -36,7 +38,8 @@ const WorksSchema = new mongoose.Schema({
         default: "Working",
     },
     tasks: {
-        type: [String],
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Tasks",
         default: [],
     }
 },

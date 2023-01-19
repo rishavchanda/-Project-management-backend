@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 const TasksSchema = new mongoose.Schema({
     projectId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Projects",
         required: true,
         unique: false,
     },
@@ -11,7 +12,8 @@ const TasksSchema = new mongoose.Schema({
     start_date: { type: String, required: true, default: "" },
     end_date: { type: String, required: true, default: "" },
     members: {
-        type: [String],
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User",
         default: [],
     },
     status: { type: String, default: "Working" },

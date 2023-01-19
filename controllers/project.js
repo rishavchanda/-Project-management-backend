@@ -232,7 +232,7 @@ export const addWork = async (req, res, next) => {
               task: req.body.tasks[i].task,
               start_date: req.body.tasks[i].start_date,
               end_date: req.body.tasks[i].end_date,
-              members: req.body.members,
+              members: req.body.tasks[i].members,
               projectId: project._id,
             });
             const task = await newTask.save();
@@ -308,12 +308,42 @@ export const addWork = async (req, res, next) => {
               );
             }
           }
-          res.status(200).json(updatedProject);
+          res.status(200).json(updateProject);
         } else {
-          return next(createError(403, "You are not allowed to add work to this project!"));
+          return res.status(403).send({
+            message: "You are not allowed to add works to this project"
+        });
         }
       }
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+//work 
+
+//get works
+export const getWorks = async (req, res, next) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return next(createError(404, "Project not found!"));
+     const works = await Works
+
+      .find({ projectId: req.params.id })
+      .populate("tasks")
+      .populate("creatorId", "name img")
+      .populate({
+        path: "tasks",
+        populate: {
+          path: "members",
+          select: "name img",
+        },
+      })
+      .sort({ createdAt: -1 });
+    res.status(200).json(works);
   } catch (err) {
     next(err);
   }

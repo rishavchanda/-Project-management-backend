@@ -47,16 +47,17 @@ export const findUser = async (req, res, next) => {
 
 export const getUser = async (req, res, next) => {
   //if the req.user id is not present then it will give a message of user not authenticated 
-  
+
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).populate("notifications").populate({
+      path: "teams",
+      populate: {
+        path: "members.id",
+        select: "_id name email",
+      }
+    }).populate("projects").populate("works").populate("tasks");
     //extract the notification from the user and send it to the client
-    const notifications = user.notifications;
-    const notificationArray = [];
-    for (let i = 0; i < notifications.length; i++) {
-      const notification = await Notifications.findById(notifications[i]);
-      notificationArray.push(notification);
-    }
+    console.log(user)
     res.status(200).json(user);
   } catch (err) {
     console.log(req.user)
@@ -162,7 +163,7 @@ export const findUserByEmail = async (req, res, next) => {
   const email = req.params.email;
   const users = [];
   try {
-    await User.findOne({ email: {$regex: email, $options: "i"} }).then((user) => {
+    await User.findOne({ email: { $regex: email, $options: "i" } }).then((user) => {
       users.push(user)
     }).catch((err) => {
       next(err)

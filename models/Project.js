@@ -51,20 +51,9 @@ const ProjectSchema = new mongoose.Schema({
         type: [{
             _id: false,
             id: {
-                type: String,
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
                 required: true,
-            },
-            img: {
-                type: String,
-                default: "",
-            },
-            name: {
-                type: String,
-                default: "",
-            },
-            email: {
-                type: String,
-                default: "",
             },
             role: {
                 type: String,

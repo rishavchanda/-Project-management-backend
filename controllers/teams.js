@@ -17,11 +17,11 @@ export const addTeam = async (req, res, next) => {
     if (!user.verified) {
         return res.status(200).json({ message: "Verify your Account." });
     }
-    const newTeams = new Teams({ members: [{ id: user.id, role: "d", access: "Owner", img: user.img, name: user.name, email: user.email }], ...req.body });
+    const newTeams = new Teams({ members: [{ id: user.id, role: "d", access: "Owner"}], ...req.body });
     try {
         const saveTeams = (await newTeams.save())
 
-        User.findByIdAndUpdate(user.id, { $push: { teams: { id: saveTeams._id, name: saveTeams.name } } }, { new: true }, (err, doc) => {
+        User.findByIdAndUpdate(user.id, { $push: { teams: saveTeams._id } }, { new: true }, (err, doc) => {
             if (err) {
                 next(err);
             }
@@ -60,26 +60,16 @@ export const deleteTeam = async (req, res, next) => {
 
 export const getTeam = async (req, res, next) => {
     try {
-        const team = await Teams.findById(req.params.id);
-        const members = []
-        const projects = []
+        const team = await Teams.findById(req.params.id).populate("members.id", "_id  name email img").populate("projects");
+        res.status(200).json(team);
         var verified = true
         await Promise.all(
             team.members.map(async (Member) => {
-                if (Member.id === req.user.id)
+                if (Member.id._id === req.user.id)
                     verified = true
-                const member = await User.findById(Member.id);
-                members.push({ id: member.id, role: Member.role, access: Member.access, name: member.name, img: member.img, email: member.email });
-            })).then(() => Promise.all(
-                team.projects.map(async (Projects) => {
-                    const project = await Project.findById(Projects);
-                    projects.push(project);
-                }))
-            )
-            .then(() => {
+            })).then(() => {
                 if (verified) {
-                    const Team = new Teams({ ...team._doc, members: members });
-                    return res.status(200).json({ Team, projects });
+                    return res.status(200).json(team);
                 } else {
                     return next(createError(403, "You are not allowed to see this Team!"));
                 }
@@ -212,7 +202,7 @@ export const verifyInvitationTeam = async (req, res, next) => {
                 return next(createError(403, "You are already a member of this team!"));
             }
         }
-        const newMember = { id: user.id, role: "d", access: "View Only", name: user.name, img: user.img, email: user.email };
+        const newMember = { id: user.id, role: "d", access: "View Only"};
 
         await Teams.findByIdAndUpdate(
             req.params.teamId,
@@ -225,7 +215,7 @@ export const verifyInvitationTeam = async (req, res, next) => {
             await User.findByIdAndUpdate(
                 req.params.userId,
                 {
-                    $push: { teams: { id: team.id, name: team.name } },
+                    $push: { teams: team.id },
                 },
                 { new: true }
             ).then((result) => {

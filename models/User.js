@@ -31,33 +31,28 @@ const UserSchema = new mongoose.Schema({
         default: false,
     },
     projects: {
-        type: [String],
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Project",
         default: [],
     },
     teams: {
-        type: [{
-            _id:false,
-            id: {
-                type: String,
-                required: true
-            },
-            name: {
-                type: String,
-                required: true
-            }
-        }],
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Teams",
         default: [],
     },
     notifications: {
-        type: [String],
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Notifications",
         default: [],
     },
     works: {
-        type: [String],
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Works",
         default: [],
     },
     tasks: {
-        type: [String],
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Tasks",
         default: [],
     }
 },

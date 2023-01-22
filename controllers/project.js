@@ -60,24 +60,18 @@ export const deleteProject = async (req, res, next) => {
 
 export const getProject = async (req, res, next) => {
   try {
-    const project = await Project.findById(req.params.id);
-    const members = []
+    const project = await Project.findById(req.params.id).populate("members.id", "_id  name email img");
     var verified = false
     await Promise.all(
       project.members.map(async (Member) => {
-        console.log(Member.id)
-        if (Member.id === req.user.id) {
+        if (Member.id.id === req.user.id) {
           verified = true
         }
-        await User.findById(Member.id).then((member) => {
-          console.log(member)
-          members.push({ id: member.id, role: Member.role, access: Member.access, name: member.name, img: member.img, email: member.email });
-        })
       })
     )
       .then(() => {
         if (verified) {
-          return res.status(200).json({ project, members });
+          return res.status(200).json(project);
         } else {
           return next(createError(403, "You are not allowed to view this project!"));
         }
@@ -220,9 +214,10 @@ export const addWork = async (req, res, next) => {
     const project = await Project.findById(req.params.id);
     if (!project) return next(createError(404, "Project not found!"));
     for (let i = 0; i < project.members.length; i++) {
-      if (project.members[i].id === req.user.id) {
+      if (project.members[i].id.toString() === req.user.id) {
         if (project.members[i].access === "Owner" || project.members[i].access === "Admin" || project.members[i].access === "Editor") {
-
+          
+          console.log("tg");
           //create tasks from the arrya of tasks or req.body.tasks and thne push the id of the tasks to the work
 
           const tasks = [];
@@ -250,8 +245,9 @@ export const addWork = async (req, res, next) => {
             tasks: tasks,
           });
           const work = await newWork.save();
+          console.log(work);
 
-          // add the work id to the tasks
+          //add the work id to the tasks
           for (let i = 0; i < tasks.length; i++) {
             Tasks.findByIdAndUpdate(tasks[i], { workId: newWork._id }, (err, doc) => {
               if (err) {
@@ -260,7 +256,7 @@ export const addWork = async (req, res, next) => {
             });
           }
 
-          // add the work id to the project
+          //add the work id to the project
           const updatedProject = await Project.findByIdAndUpdate(
             req.params.id,
             {
@@ -302,12 +298,14 @@ export const addWork = async (req, res, next) => {
               User.findByIdAndUpdate(req
                 .body.tasks[k].members[i], { $push: { notifications: notification._id } }, (err, doc) => {
                   if (err) {
+
                     next(err);
                   }
                 }
               );
-            }
+            }l
           }
+          
           res.status(200).json(updateProject);
         } else {
           return res.status(403).send({

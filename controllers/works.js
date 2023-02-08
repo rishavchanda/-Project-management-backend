@@ -16,7 +16,7 @@ export const addWork = async (req, res, next) => {
   if (!user.verified) {
     return res.status(200).json({ message: "Verify your Account." });
   }
-  const newWork = new Project({ members: [{ id: user.id, img: user.img, email: user.email, name: user.name, role: "d", access: "Owner" }], ...req.body });
+  const newWork = new Project({ members: [{ id: user.id, role: "d", access: "Owner" }], ...req.body });
   try {
     const saveProject = await (await newWork.save());
     User.findByIdAndUpdate(user.id, { $push: { projects: saveProject._id } }, { new: true }, (err, doc) => {
@@ -29,6 +29,7 @@ export const addWork = async (req, res, next) => {
     next(err);
   }
 };
+
 
 
 export const deleteProject = async (req, res, next) => {
@@ -63,19 +64,19 @@ export const getProject = async (req, res, next) => {
     await Promise.all(
       project.members.map(async (Member) => {
         console.log(Member.id)
-        if(Member.id === req.user.id){
+        if (Member.id === req.user.id) {
           verified = true
         }
-         await User.findById(Member.id).then((member)=>{
+        await User.findById(Member.id).then((member) => {
           console.log(member)
-          members.push({ id: member.id, role: Member.role, access: Member.access, name: member.name, img: member.img, email: member.email });  
+          members.push({ id: member.id, role: Member.role, access: Member.access, name: member.name, img: member.img, email: member.email });
         })
-       })
+      })
     )
       .then(() => {
         if (verified) {
-          return res.status(200).json({project, members});
-        }else{
+          return res.status(200).json({ project, members });
+        } else {
           return next(createError(403, "You are not allowed to view this project!"));
         }
       });

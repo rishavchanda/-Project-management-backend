@@ -303,7 +303,7 @@ export const addWork = async (req, res, next) => {
                   }
                 }
               );
-            }l
+            }
           }
           
           res.status(200).json(updateProject);

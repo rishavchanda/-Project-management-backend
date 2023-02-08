@@ -9,7 +9,9 @@ import {
   getUserTeams,
   findUser,
   findUserByEmail,
-  getNotifications
+  getNotifications,
+  getWorks,
+  getTasks
 } from "../controllers/user.js";
 import { verifyToken } from "../verifyToken.js";
 
@@ -42,6 +44,12 @@ router.get("/search/:email",verifyToken, findUserByEmail);
 
 //get notifications of a user
 router.get("/notifications", verifyToken, getNotifications);
+
+//get works of a user
+router.get("/works", verifyToken, getWorks);
+
+//get tasks of a user
+router.get("/tasks", verifyToken, getTasks);
 
 
 export default router;

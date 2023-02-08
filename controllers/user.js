@@ -84,6 +84,70 @@ export const getNotifications = async (req, res, next) => {
 }
 
 
+
+//fetch all the works of the user
+export const getWorks = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).populate(
+      {
+        path: "works",
+        populate: {
+          path: "tasks",
+          populate: {
+            path: "members",
+            select: "name img",
+          },
+        }
+      }).populate({
+        path: "works",
+        populate: {
+          path: "creatorId",
+          select: "name img",
+        }
+      })
+      .sort({ updatedAt: -1 });;
+    if (!user) return next(createError(404, "User not found!"));
+    //store all the works of the user in an array and send it to the client
+    const works = [];
+    await Promise.all(
+      user.works.map(async (work) => {
+        works.push(work);
+      })
+    ).then(() => {
+      res.status(200).json(works);
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+//get all the tasks of the user
+export const getTasks = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).populate({
+      path: "tasks",
+      populate: {
+        path: "members",
+        select: "name img",
+      }
+    }).sort({ end_date: 1 });
+    if (!user) return next(createError(404, "User not found!"));
+    //store all the tasks of the user in an array and send it to the client
+    const tasks = [];
+    await Promise.all(
+      user.tasks.map(async (task) => {
+        tasks.push(task);
+      })
+    ).then(() => {
+      res.status(200).json(tasks);
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
 export const subscribe = async (req, res, next) => {
   try {
     await User.findByIdAndUpdate(req.user.id, {

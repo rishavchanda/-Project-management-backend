@@ -10,7 +10,7 @@ import cors from 'cors';
 const app = express();
 dotenv.config();
 
-const port = process.env.PORT || 8800;
+const port = process.env.PORT || 8700;
 
 const connect = () => {
     mongoose.connect(process.env.MONGO_URL).then(() => {

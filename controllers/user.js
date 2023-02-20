@@ -186,7 +186,7 @@ export const getUserProjects = async (req, res, next) => {
     const user = await User.findById(req.user.id).populate("projects")
     const projects = []
     await Promise.all(user.projects.map(async (project) => {
-      await Project.findById(project).then((project) => {
+      await Project.findById(project).populate("members.id", "_id  name email img").then((project) => {
         projects.push(project)
       }).catch((err) => {
         next(err)

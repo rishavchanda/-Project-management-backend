@@ -17,7 +17,7 @@ export const addTeam = async (req, res, next) => {
     if (!user.verified) {
         return res.status(200).json({ message: "Verify your Account." });
     }
-    const newTeams = new Teams({ members: [{ id: user.id, role: "d", access: "Owner"}], ...req.body });
+    const newTeams = new Teams({ members: [{ id: user.id, role: "d", access: "Owner" }], ...req.body });
     try {
         const saveTeams = (await newTeams.save())
 
@@ -60,7 +60,13 @@ export const deleteTeam = async (req, res, next) => {
 
 export const getTeam = async (req, res, next) => {
     try {
-        const team = await Teams.findById(req.params.id).populate("members.id", "_id  name email img").populate("projects");
+        const team = await Teams.findById(req.params.id).populate("members.id", "_id  name email img").populate({
+            path: "projects",
+            populate: {
+                path: "members.id",
+                select: "_id name email",
+            }
+        });
         res.status(200).json(team);
         var verified = true
         await Promise.all(
@@ -202,7 +208,7 @@ export const verifyInvitationTeam = async (req, res, next) => {
                 return next(createError(403, "You are already a member of this team!"));
             }
         }
-        const newMember = { id: user.id, role: "d", access: "View Only"};
+        const newMember = { id: user.id, role: "d", access: "View Only" };
 
         await Teams.findByIdAndUpdate(
             req.params.teamId,

@@ -27,12 +27,6 @@ router.delete("/:id", verifyToken, deleteUser);
 router.get("/find/:id",verifyToken, findUser);
 router.get("/find",verifyToken, getUser);
 
-//subscribe a user
-router.put("/sub/:id", verifyToken, subscribe);
-
-//unsubscribe a user
-router.put("/unsub/:id", verifyToken, unsubscribe);
-
 //get user projects
 router.get("/projects", verifyToken, getUserProjects);
 

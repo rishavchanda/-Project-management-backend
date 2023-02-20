@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
 const TeamSchema = new mongoose.Schema({
     name: {
@@ -57,8 +57,9 @@ const TeamSchema = new mongoose.Schema({
         default: [],
     },
     projects: {
-        type: [String],
+        type: [mongoose.Schema.Types.ObjectId],
         default: [],
+        ref: "Project",
         unique: true
     }
 },

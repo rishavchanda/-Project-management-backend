@@ -76,8 +76,13 @@ export const signin = async (req, res, next) => {
             return res.status(203).json({ message: "Verify Account :-  Open your mail and verify account to login" });
         }
         const token = jwt.sign({ id: user._id }, process.env.JWT);
+        res.header('Access-Control-Allow-Origin', "https://dull-blue-dolphin-tutu.cyclic.app");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        res.header( 'Access-Control-Allow-Credentials',true);
+        var date = new Date();
+        var tokenExpire = date.setTime(date.getTime() + (360 * 1000));
         const { password, ...others } = user._doc;
-        res.cookie("access_token", token, { httpOnly: true }).status(200).json(others);
+        res.cookie("access_token", token, { maxAge: tokenExpire, httpOnly: true }).status(200).json(others).send();
     } catch (err) {
         next(err);
     }

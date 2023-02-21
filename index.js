@@ -21,7 +21,7 @@ const connect = () => {
 };
 
 const corsOptions ={
-    origin: 'http://localhost:3000', 
+    origin: 'https://dull-blue-dolphin-tutu.cyclic.app', 
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200,
     allowedHeaders: [

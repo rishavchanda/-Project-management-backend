@@ -20,19 +20,10 @@ const connect = () => {
     });
 };
 
-const corsOptions ={
-    origin: 'https://dull-blue-dolphin-tutu.cyclic.app', 
-    credentials:true,            //access-control-allow-credentials:true
-    optionSuccessStatus:200,
-    allowedHeaders: [
-        "Content-Type",
-        "Accept",
-        "Origin",
-        "X-Requested-With",
-        "Authorization",
-        "Set-Cookie",
-      ],
-}
+const corsOptions = {
+    origin: true, //included origin as true
+    credentials: true, //included credentials as true
+};
 
 app.use(cookieParser())
 app.use(express.json())
